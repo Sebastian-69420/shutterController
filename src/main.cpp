@@ -1,114 +1,92 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <ezButton.h>
 
 // My own files
 #include "wifi_connect.h"
+#include "shutter.h"
 
 // INPUTS
-#define buttonPin 32
-#define wifiButtonPin 33
-
-#define shutterButtonUp 17
-#define shutterButtonDown 16
-#define endstopUp 26
-#define endstopDown 25
+ezButton shutterButtonUp(34, INPUT_PULLDOWN);
+ezButton shutterButtonDown(35, INPUT_PULLDOWN);
+ezButton endstopUp(32, INPUT_PULLDOWN);
+ezButton endstopDown(33, INPUT_PULLDOWN);
+ezButton buttonPin(25, INPUT_PULLDOWN);
+ezButton wifiButtonPin(26, INPUT_PULLDOWN);
 
 // OUTPUTS
-#define ledPin 14
-#define wifiConnectPin 27
+#define ledPin 2
+#define wifiConnectPin 15
 
 #define shutterDriveUp 4
-#define shutterDriveDown 2
+#define shutterDriveDown 0
 
-bool buttonReading;
-bool buttonState;
-bool ledState;
-bool lastButtonState = false;
-unsigned long lastDebounceTime = 0;
-unsigned long debounceDelay = 50;
+#define DEBOUNCE_TIME 50
 
 void setup()
 {
 
   // Just for testing.
   pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLDOWN);
 
   // Actually needed.
-  pinMode(wifiButtonPin, INPUT_PULLDOWN);
   pinMode(wifiConnectPin, OUTPUT);
-
-  pinMode(shutterButtonUp, INPUT_PULLDOWN);
-  pinMode(shutterButtonDown, INPUT_PULLDOWN);
-  pinMode(endstopUp, INPUT_PULLDOWN);
-  pinMode(endstopDown, INPUT_PULLDOWN);
-
   pinMode(shutterDriveUp, OUTPUT);
   pinMode(shutterDriveDown, OUTPUT);
 
   Serial.begin(9800);
   connectToWiFi(wifiConnectPin);
-  Serial.println("Setup done.");
-}
 
-void driveShutterUp()
-{
-  digitalWrite(shutterDriveUp, HIGH);
-  delay(50);
-
-  while (digitalRead(endstopUp) == LOW)
-  {
-    if (digitalRead(shutterButtonUp) == HIGH || digitalRead(shutterDriveDown) == HIGH)
-    {
-      delay(50);
-      break;
-    }
-  }
-  digitalWrite((shutterDriveUp), LOW);
-}
-
-void driveShutterDown()
-{
-  while (digitalRead(endstopDown) == LOW)
-  {
-    digitalWrite(shutterDriveDown, HIGH);
-  }
-  digitalWrite((shutterDriveDown), LOW);
+  shutterButtonUp.setDebounceTime(DEBOUNCE_TIME);
+  shutterButtonDown.setDebounceTime(DEBOUNCE_TIME);
+  endstopUp.setDebounceTime(DEBOUNCE_TIME);
+  endstopDown.setDebounceTime(DEBOUNCE_TIME);
+  buttonPin.setDebounceTime(DEBOUNCE_TIME);
+  wifiButtonPin.setDebounceTime(DEBOUNCE_TIME);
 }
 
 void loop()
 {
-  if (digitalRead(wifiButtonPin) == HIGH)
-  {
+  shutterButtonUp.loop();
+  shutterButtonDown.loop();
+  endstopUp.loop();
+  endstopDown.loop();
+  buttonPin.loop();
+  wifiButtonPin.loop();
 
-    connectToWiFi(wifiConnectPin);
-  }
+  if (shutterButtonUp.isPressed())
+    Serial.println("The button 1 is pressed");
 
-  if (digitalRead(shutterButtonUp) == HIGH)
-  {
-    driveShutterUp();
-  }
-  else if (digitalRead(shutterButtonDown) == HIGH)
-  {
-    driveShutterDown();
-  }
+  if (shutterButtonUp.isReleased())
+    Serial.println("The button 1 is released");
 
-  buttonReading = digitalRead(buttonPin);
-  if (buttonReading != lastButtonState)
-  {
-    lastDebounceTime = millis();
-  }
-  lastButtonState = buttonReading;
-  if ((millis() - lastDebounceTime) > debounceDelay)
-  {
-    if (buttonReading != buttonState)
-    {
-      buttonState = buttonReading;
-      if (buttonState == HIGH)
-      {
-        ledState = !ledState;
-      }
-    }
-  }
-  digitalWrite(ledPin, ledState);
+  if (shutterButtonDown.isPressed())
+    Serial.println("The button 2 is pressed");
+
+  if (shutterButtonDown.isReleased())
+    Serial.println("The button 2 is released");
+
+  if (endstopUp.isPressed())
+    Serial.println("The button 3 is pressed");
+
+  if (endstopUp.isReleased())
+    Serial.println("The button 3 is released");
+
+  if (endstopDown.isPressed())
+    Serial.println("The button 4 is pressed");
+
+  if (endstopDown.isReleased())
+    Serial.println("The button 4 is released");
+
+  if (buttonPin.isPressed())
+    Serial.println("The button 5 is pressed");
+
+  if (buttonPin.isReleased())
+    Serial.println("The button 5 is released");
+
+  if (wifiButtonPin.isPressed())
+    Serial.println("The button 6 is pressed");
+
+  if (wifiButtonPin.isReleased())
+    Serial.println("The button 6 is released");
 }
