@@ -53,20 +53,27 @@ void setup()
 
 void driveShutterUp()
 {
-  while (endstopUp == false)
+  digitalWrite(shutterDriveUp, HIGH);
+  delay(50);
+
+  while (digitalRead(endstopUp) == LOW)
   {
-    digitalWrite(shutterDriveUp, HIGH);
-    Serial.println("Shutter drives up.");
+    if (digitalRead(shutterButtonUp) == HIGH || digitalRead(shutterDriveDown) == HIGH)
+    {
+      delay(50);
+      break;
+    }
   }
+  digitalWrite((shutterDriveUp), LOW);
 }
 
 void driveShutterDown()
 {
-  while (endstopDown == false)
+  while (digitalRead(endstopDown) == LOW)
   {
     digitalWrite(shutterDriveDown, HIGH);
-    Serial.println("Shutter drives down.");
   }
+  digitalWrite((shutterDriveDown), LOW);
 }
 
 void loop()
@@ -77,14 +84,12 @@ void loop()
     connectToWiFi(wifiConnectPin);
   }
 
-  if (shutterButtonUp == HIGH)
+  if (digitalRead(shutterButtonUp) == HIGH)
   {
-    Serial.println("Button Up got pressed.");
     driveShutterUp();
   }
-  else if (shutterButtonDown == HIGH)
+  else if (digitalRead(shutterButtonDown) == HIGH)
   {
-    Serial.println("Button Down got pressed.");
     driveShutterDown();
   }
 
