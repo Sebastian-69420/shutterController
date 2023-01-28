@@ -4,7 +4,7 @@
 
 // My own files
 #include "wifi_connect.h"
-#include "shutter.h"
+#include <shutter.h>
 
 // INPUTS
 ezButton shutterButtonUp(34, INPUT_PULLDOWN);
@@ -18,21 +18,18 @@ ezButton wifiButtonPin(26, INPUT_PULLDOWN);
 #define ledPin 2
 #define wifiConnectPin 15
 
-#define shutterDriveUp 4
-#define shutterDriveDown 0
+shutter shutterDriveUp(4);
+shutter shutterDriveDown(0);
 
 #define DEBOUNCE_TIME 50
 
 void setup()
 {
-
   // Just for testing.
   pinMode(ledPin, OUTPUT);
 
   // Actually needed.
   pinMode(wifiConnectPin, OUTPUT);
-  pinMode(shutterDriveUp, OUTPUT);
-  pinMode(shutterDriveDown, OUTPUT);
 
   Serial.begin(9800);
   connectToWiFi(wifiConnectPin);
@@ -54,35 +51,36 @@ void loop()
   buttonPin.loop();
   wifiButtonPin.loop();
 
+  shutterDriveUp.loop();
+  shutterDriveDown.loop();
+
   if (shutterButtonUp.isPressed())
     Serial.println("The button 1 is pressed");
+  shutter goUp();
 
   if (shutterButtonUp.isReleased())
     Serial.println("The button 1 is released");
 
   if (shutterButtonDown.isPressed())
-    Serial.println("The button 2 is pressed");
+    shutter goDown();
+  Serial.println("The button 2 is pressed");
 
   if (shutterButtonDown.isReleased())
     Serial.println("The button 2 is released");
 
   if (endstopUp.isPressed())
-    Serial.println("The button 3 is pressed");
+    shutter stop();
+  Serial.println("The button 3 is pressed");
 
   if (endstopUp.isReleased())
     Serial.println("The button 3 is released");
 
   if (endstopDown.isPressed())
-    Serial.println("The button 4 is pressed");
+    shutter stop();
+  Serial.println("The button 4 is pressed");
 
   if (endstopDown.isReleased())
     Serial.println("The button 4 is released");
-
-  if (buttonPin.isPressed())
-    Serial.println("The button 5 is pressed");
-
-  if (buttonPin.isReleased())
-    Serial.println("The button 5 is released");
 
   if (wifiButtonPin.isPressed())
     Serial.println("The button 6 is pressed");

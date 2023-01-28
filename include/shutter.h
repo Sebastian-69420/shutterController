@@ -1,30 +1,23 @@
+#ifndef shutter_h
+#define shutter_h
+
 #include <Arduino.h>
 
-bool inputShutterUpReading;
-bool inputShutterDownReading;
-bool inputEndstopUpReading;
-bool inputEndstopDownReading;
-bool lastShutterUpReading;
-bool lastShutterDownReading;
+// #define stuff
 
-void driveShutterUp(
-    int shutterDriveUp, int endstopUp, int shutterButtonUp, int shutterDriveDown)
+class shutter
 {
-    digitalWrite(shutterDriveUp, HIGH);
+private:
+    bool direction;
+    int outPin;
 
-    if (inputEndstopUpReading == HIGH)
-    {
-        digitalWrite((shutterDriveUp), LOW);
-        return;
-    }
-}
+public:
+    shutter(int pin);
+    shutter(int pin, int mode);
+    void goUp(void);
+    void goDown(void);
+    void stop(void);
+    void loop(void);
+};
 
-void driveShutterDown(
-    int shutterDriveDown, int endstopDown, int shutterButtonDown, int shutterDriveUp)
-{
-    while (digitalRead(endstopDown) == LOW)
-    {
-        digitalWrite(shutterDriveDown, HIGH);
-    }
-    digitalWrite((shutterDriveDown), LOW);
-}
+#endif
