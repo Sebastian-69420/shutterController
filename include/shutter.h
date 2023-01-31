@@ -8,16 +8,14 @@
 class shutter
 {
 private:
-    bool direction;
-    int outPin;
+    int _outputPin;
+    int _outputState;
 
 public:
     shutter(int pin);
-    shutter(int pin, int mode);
     void goUp(void);
     void goDown(void);
     void stop(void);
-    void loop(void);
 };
 
 #endif

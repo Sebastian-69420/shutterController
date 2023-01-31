@@ -1,32 +1,26 @@
 #include <shutter.h>
 
-shutter::shutter(int pin) : shutter(pin, OUTPUT){};
-
-shutter::shutter(int pin, int mode)
+shutter::shutter(int pin)
 {
-    outPin = pin;
+    _outputPin = pin;
+    _outputState = LOW;
 
-    pinMode(outPin, mode);
+    return;
 }
 
-bool shutter::goUp(void)
+void shutter::goUp(void)
 {
-    direction = true;
-    return direction;
+    stop();
+    return digitalWrite(_outputPin, HIGH);
 }
 
-bool shutter::goDown(void)
+void shutter::goDown(void)
 {
-    direction = false;
-    return direction;
+    stop();
+    return digitalWrite(_outputPin, HIGH);
 }
 
 void shutter::stop()
 {
-    return;
-}
-
-void shutter::loop(void)
-{
-    return;
+    return digitalWrite(_outputPin, LOW);
 }
