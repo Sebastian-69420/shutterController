@@ -3,21 +3,31 @@
 
 #include <Arduino.h>
 
-// #define stuff
-
 class shutter
 {
 private:
-    bool direction;
-    int outPin;
+    int inUp_;
+    int inDown_;
+    int inEndUp_;
+    int inEndDown_;
+    int outUp_;
+    int outDown_;
 
+    
 public:
-    shutter(int pin);
-    shutter(int pin, int mode);
-    void goUp(void);
-    void goDown(void);
-    void stop(void);
-    void loop(void);
+  void shutterInput(
+    int inputPinUp,
+    int inputPinDown,
+    int inputPinEndstopUp,
+    int intputPinEndstopDown);
+    
+  void shutterOutput(
+    int outputPinUp,
+    int outputPinDown);
+  
+  void stop(void);
+  void driveUp(void);
+  void driveDown(void);
 };
 
 #endif
